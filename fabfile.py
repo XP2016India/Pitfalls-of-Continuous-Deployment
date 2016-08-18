@@ -20,8 +20,8 @@ def deploy():
     with cd(env.path):
         run("tar -zxvf sample.tar.gz")
     if "staging" in env.path:
+        run("supervisorctl restart staging")
+    else:
         run("rm /home/xpconf/websites/sample-live")
         run("ln -s {} /home/xpconf/websites/sample-live".format(env.path))
         run("supervisorctl restart live")
-    else:
-        run("supervisorctl restart staging")
