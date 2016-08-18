@@ -11,8 +11,17 @@ def staging():
     env.path = '/home/xpconf/websites/sample-staging'
 
 def deploy():
-    if "staging" not in env.path:
+    if "staging" in env.path:
+        with cd(env.path):
+            run("rm sample/ -rf")
+    else:
         run("mkdir " + env.path)
     put("sample.tar.gz", env.path)
     with cd(env.path):
         run("tar -zxvf sample.tar.gz")
+    if "staging" in env.path:
+        run("rm /home/xpconf/websites/sample-live")
+        run("ln -s {} /home/xpconf/websites/sample-live".format(env.path))
+        run("supervisorctl restart live")
+    else:
+        run("supervisorctl restart staging")
